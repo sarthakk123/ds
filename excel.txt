@@ -1,0 +1,150 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+from sklearn.preprocessing import LabelEncoder
+
+df = pd.read_csv("StudentsPerformanceTest1.csv")
+print(df)
+print(df.shape)
+print(df.columns.tolist())
+
+print(df.isnull())
+
+series = pd.isnull(df["math score"])
+print(df[series])
+
+print(df.notnull())
+
+series1 = pd.notnull(df["math score"])
+print(df[series1])
+
+le = LabelEncoder()
+if 'gender' in df.columns:
+    df['gender'] = le.fit_transform(df['gender'])
+    print(df['gender'].head())
+
+missing_values = ["Na", "na"]
+df2 = pd.read_csv("StudentsPerformanceTest1.csv", na_values=missing_values)
+print(df2)
+
+ndf = df.copy()
+print(ndf.fillna(0))
+
+data = df.copy()
+data['math score'] = data['math score'].fillna(data['math score'].mean())
+data['math score'] = data['math score'].fillna(data['math score'].median())
+data['math score'] = data['math score'].fillna(data['math score'].std())
+data['math score'] = data['math score'].fillna(data['math score'].min())
+data['math score'] = data['math score'].fillna(data['math score'].max())
+
+m_v = df['math score'].mean()
+df['math score'].fillna(value=m_v, inplace=True)
+print(df)
+
+ndf2 = df.copy()
+print(ndf2.replace(to_replace=np.nan, value=-99))
+
+print(ndf.dropna())
+print(ndf.dropna(how='all'))
+print(ndf.dropna(axis=1))
+
+new_data = ndf.dropna(axis=0, how='any')
+print(new_data)
+
+df = pd.read_csv("StudentsPerformanceTest1.csv")
+
+col = ['math score', 'reading score', 'writing score', 'placement score']
+df.boxplot(col)
+plt.title("Boxplot - Outlier Detection")
+plt.tight_layout()
+plt.show()
+
+print(np.where(df['math score'] > 90))
+print(np.where(df['reading score'] < 25))
+print(np.where(df['writing score'] < 30))
+
+fig, ax = plt.subplots(figsize=(18, 10))
+ax.scatter(df['placement score'], df['placement offer count'])
+ax.set_xlabel('Placement Score')
+ax.set_ylabel('Placement Offer Count')
+plt.title("Scatterplot - Placement Score vs Offer Count")
+plt.show()
+
+print(np.where((df['placement score'] < 50) & (df['placement offer count'] > 1)))
+print(np.where((df['placement score'] > 85) & (df['placement offer count'] < 3)))
+
+z = np.abs(stats.zscore(df['math score']))
+print(z)
+
+threshold = 0.18
+sample_outliers = np.where(z < threshold)
+print(sample_outliers)
+
+sorted_rscore = sorted(df['reading score'])
+print(sorted_rscore)
+
+q1 = np.percentile(sorted_rscore, 25)
+q3 = np.percentile(sorted_rscore, 75)
+print(q1, q3)
+
+IQR = q3 - q1
+lwr_bound = q1 - (1.5 * IQR)
+upr_bound = q3 + (1.5 * IQR)
+print(lwr_bound, upr_bound)
+
+r_outliers = []
+for i in sorted_rscore:
+    if i < lwr_bound or i > upr_bound:
+        r_outliers.append(i)
+print(r_outliers)
+
+new_df = df.copy()
+for i in sample_outliers[0]:
+    new_df.drop(i, inplace=True)
+print(new_df)
+
+df_stud = df.copy()
+ninetieth_percentile = np.percentile(df_stud['math score'], 90)
+b = np.where(df_stud['math score'] > ninetieth_percentile, ninetieth_percentile, df_stud['math score'])
+print("New array:", b)
+
+df_stud.insert(1, "m score", b, True)
+print(df_stud)
+
+df.boxplot(['reading score'])
+plt.show()
+
+refined_df = df.copy()
+refined_df.boxplot(['reading score'])
+plt.show()
+
+median = np.median(sorted_rscore)
+print(median)
+
+refined_df['reading score'] = np.where(refined_df['reading score'] > upr_bound, median, refined_df['reading score'])
+refined_df['reading score'] = np.where(refined_df['reading score'] < lwr_bound, median, refined_df['reading score'])
+print(refined_df)
+
+refined_df.boxplot(['reading score'])
+plt.show()
+
+df = pd.read_csv("StudentsPerformanceTest1.csv")
+
+current_year = 2024
+df['Duration'] = current_year - df['Club_Join_Date']
+print(df[['Club_Join_Date', 'Duration']].head(10))
+
+z2 = np.abs(stats.zscore(df['math score']))
+new_df2 = df[z2 >= 0.18].copy()
+
+new_df2['math score'].plot(kind='hist', title='Math Score - Before Log Transform')
+plt.xlabel('Math Score')
+plt.show()
+
+df['log_math'] = np.log10(df['math score'])
+print(df[['math score', 'log_math']].head(10))
+
+df['log_math'].plot(kind='hist', title='Math Score - After Log10 Transform')
+plt.xlabel('log10(Math Score)')
+plt.show()

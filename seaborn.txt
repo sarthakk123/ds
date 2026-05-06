@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+dataset = sns.load_dataset('titanic')
+
+print(dataset.head())
+
+sns.histplot(dataset['fare'], kde=False, bins=10)
+plt.title('Histogram of Fare')
+plt.xlabel('Fare')
+plt.ylabel('Count')
+plt.show()
+
+sns.distplot(dataset['age'], bins=10)
+plt.show()
+
+sns.jointplot(x=dataset['age'], y=dataset['fare'], kind='scatter')
+plt.show()
+
+sns.jointplot(x=dataset['age'], y=dataset['fare'], kind='hex')
+plt.show()
+
+sns.rugplot(dataset['fare'])
+plt.show()
+
+sns.barplot(x='sex', y='age', data=dataset)
+plt.show()
+
+sns.countplot(x='sex', data=dataset)
+plt.show()
+
+sns.boxplot(x='sex', y='age', data=dataset)
+plt.show()
+
+sns.boxplot(x='sex', y='age', data=dataset, hue='survived')
+plt.show()
+
+sns.violinplot(x='sex', y='age', data=dataset)
+plt.show()
+
+sns.violinplot(x='sex', y='age', data=dataset, hue='survived')
+plt.show()
+
+sns.stripplot(x='sex', y='age', data=dataset, jitter=True)
+plt.show()
+
+sns.stripplot(x='sex', y='age', data=dataset, jitter=True, hue='survived')
+plt.show()
+
+sns.swarmplot(x='sex', y='age', data=dataset)
+plt.show()
+
+sns.swarmplot(x='sex', y='age', data=dataset, hue='survived')
+plt.show()
+
+corr = dataset.corr(numeric_only=True)
+
+sns.heatmap(corr)
+plt.show()
+
+sns.heatmap(corr, annot=True)
+plt.show()
+
+sns.clustermap(corr)
+plt.show()

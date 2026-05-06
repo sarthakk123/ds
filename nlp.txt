@@ -1,0 +1,73 @@
+import nltk
+from nltk.tokenize import sent_tokenize,word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer,WordNetLemmatizer
+from sklearn.feature_extraction.text import CountVectorizer,TfidfVectorizer
+
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('averaged_perceptron_tagger_eng')
+
+txt = """Tokenization is the first step in text analytics. 
+The process of breaking down a text paragraph into smaller 
+chunks such as words or sentences is called Tokenization."""
+
+sentence=sent_tokenize(txt)
+
+sentence
+
+words=word_tokenize(txt)
+
+words
+
+stop_words=set(stopwords.words('english'))
+
+stop_words
+
+filter=[]
+for i in words:
+    if i not in stop_words:
+        filter.append(i)
+
+filter
+
+ls=PorterStemmer()
+stemmed_words=[]
+for i in filter:
+    stemmed_words.append(ls.stem(i))
+
+stemmed_words
+
+ls=WordNetLemmatizer()
+lemm_words=[]
+for i in filter:
+    lemm_words.append(ls.lemmatize(i))
+
+lemm_words
+
+pos_tag=nltk.pos_tag(filter)
+
+pos_tag
+
+cv=CountVectorizer()
+
+x=cv.fit_transform(filter)
+
+x
+
+x.toarray()
+
+cv.get_feature_names_out()
+
+x1=TfidfVectorizer()
+
+y=x1.fit_transform(filter)
+
+y
+
+y.toarray()
+
+x1.get_feature_names_out()

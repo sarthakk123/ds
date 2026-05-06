@@ -1,0 +1,50 @@
+import pandas as pd
+import seaborn as sns
+from sklearn import preprocessing
+
+iris = sns.load_dataset('iris')
+
+print(iris.head())
+
+print(iris.mean(numeric_only=True))
+
+print(iris.median(numeric_only=True))
+
+print(iris.mode())
+
+print(iris.min(numeric_only=True))
+
+print(iris.max(numeric_only=True))
+
+print(iris.std(numeric_only=True))
+
+print(iris.describe())
+
+print(iris.groupby(['species']).mean(numeric_only=True))
+
+enc = preprocessing.OneHotEncoder()
+
+enc_df = pd.DataFrame(
+    enc.fit_transform(iris[['species']]).toarray()
+)
+
+print(enc_df)
+
+df_encode = iris.join(enc_df)
+
+print(df_encode)
+
+irisSet = (iris['species'] == 'setosa')
+
+print("Iris-setosa")
+print(iris[irisSet].describe())
+
+irisVer = (iris['species'] == 'versicolor')
+
+print("Iris-versicolor")
+print(iris[irisVer].describe())
+
+irisVir = (iris['species'] == 'virginica')
+
+print("Iris-virginica")
+print(iris[irisVir].describe())
