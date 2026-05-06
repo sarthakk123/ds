@@ -4,42 +4,43 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from sklearn.preprocessing import LabelEncoder
 
-df = pd.read_csv("StudentsPerformanceTest1.csv")
+df = pd.read_csv("Student.csv")
 print(df)
 print(df.shape)
 print(df.columns.tolist())
 
 print(df.isnull())
 
-series = pd.isnull(df["math score"])
+series = pd.isnull(df["Math_Score"])
 print(df[series])
 
 print(df.notnull())
 
-series1 = pd.notnull(df["math score"])
+series1 = pd.notnull(df["Math_Score"])
 print(df[series1])
 
 le = LabelEncoder()
+
 if 'gender' in df.columns:
     df['gender'] = le.fit_transform(df['gender'])
     print(df['gender'].head())
 
 missing_values = ["Na", "na"]
-df2 = pd.read_csv("StudentsPerformanceTest1.csv", na_values=missing_values)
+df2 = pd.read_csv("Student.csv", na_values=missing_values)
 print(df2)
 
 ndf = df.copy()
 print(ndf.fillna(0))
 
 data = df.copy()
-data['math score'] = data['math score'].fillna(data['math score'].mean())
-data['math score'] = data['math score'].fillna(data['math score'].median())
-data['math score'] = data['math score'].fillna(data['math score'].std())
-data['math score'] = data['math score'].fillna(data['math score'].min())
-data['math score'] = data['math score'].fillna(data['math score'].max())
+data['Math_Score'] = data['Math_Score'].fillna(data['Math_Score'].mean())
+data['Math_Score'] = data['Math_Score'].fillna(data['Math_Score'].median())
+data['Math_Score'] = data['Math_Score'].fillna(data['Math_Score'].std())
+data['Math_Score'] = data['Math_Score'].fillna(data['Math_Score'].min())
+data['Math_Score'] = data['Math_Score'].fillna(data['Math_Score'].max())
 
-m_v = df['math score'].mean()
-df['math score'].fillna(value=m_v, inplace=True)
+m_v = df['Math_Score'].mean()
+df['Math_Score'] = df['Math_Score'].fillna(value=m_v)
 print(df)
 
 ndf2 = df.copy()
@@ -52,36 +53,35 @@ print(ndf.dropna(axis=1))
 new_data = ndf.dropna(axis=0, how='any')
 print(new_data)
 
-df = pd.read_csv("StudentsPerformanceTest1.csv")
+df = pd.read_csv("Student.csv")
 
-col = ['math score', 'reading score', 'writing score', 'placement score']
+col = ['Math_Score', 'Reading_Score', 'Writing_Score']
 df.boxplot(col)
 plt.title("Boxplot - Outlier Detection")
 plt.tight_layout()
 plt.show()
 
-print(np.where(df['math score'] > 90))
-print(np.where(df['reading score'] < 25))
-print(np.where(df['writing score'] < 30))
+print(np.where(df['Math_Score'] > 90))
+print(np.where(df['Reading_Score'] < 25))
+print(np.where(df['Writing_Score'] < 30))
 
 fig, ax = plt.subplots(figsize=(18, 10))
-ax.scatter(df['placement score'], df['placement offer count'])
-ax.set_xlabel('Placement Score')
-ax.set_ylabel('Placement Offer Count')
-plt.title("Scatterplot - Placement Score vs Offer Count")
+
+ax.scatter(df['Math_Score'], df['Reading_Score'])
+ax.set_xlabel('Math Score')
+ax.set_ylabel('Reading Score')
+plt.title("Scatterplot - Math Score vs Reading Score")
 plt.show()
 
-print(np.where((df['placement score'] < 50) & (df['placement offer count'] > 1)))
-print(np.where((df['placement score'] > 85) & (df['placement offer count'] < 3)))
 
-z = np.abs(stats.zscore(df['math score']))
+z = np.abs(stats.zscore(df['Math_Score']))
 print(z)
 
 threshold = 0.18
 sample_outliers = np.where(z < threshold)
 print(sample_outliers)
 
-sorted_rscore = sorted(df['reading score'])
+sorted_rscore = sorted(df['Reading_Score'].dropna())
 print(sorted_rscore)
 
 q1 = np.percentile(sorted_rscore, 25)
@@ -101,49 +101,45 @@ print(r_outliers)
 
 new_df = df.copy()
 for i in sample_outliers[0]:
-    new_df.drop(i, inplace=True)
+    if i in new_df.index:
+        new_df.drop(i, inplace=True)
 print(new_df)
 
 df_stud = df.copy()
-ninetieth_percentile = np.percentile(df_stud['math score'], 90)
-b = np.where(df_stud['math score'] > ninetieth_percentile, ninetieth_percentile, df_stud['math score'])
+ninetieth_percentile = np.percentile(df_stud['Math_Score'], 90)
+b = np.where(df_stud['Math_Score'] > ninetieth_percentile, ninetieth_percentile, df_stud['Math_Score'])
 print("New array:", b)
 
 df_stud.insert(1, "m score", b, True)
 print(df_stud)
 
-df.boxplot(['reading score'])
+df.boxplot(['Reading_Score'])
 plt.show()
 
 refined_df = df.copy()
-refined_df.boxplot(['reading score'])
+refined_df.boxplot(['Reading_Score'])
 plt.show()
 
 median = np.median(sorted_rscore)
 print(median)
 
-refined_df['reading score'] = np.where(refined_df['reading score'] > upr_bound, median, refined_df['reading score'])
-refined_df['reading score'] = np.where(refined_df['reading score'] < lwr_bound, median, refined_df['reading score'])
+refined_df['Reading_Score'] = np.where(refined_df['Reading_Score'] > upr_bound, median, refined_df['Reading_Score'])
+refined_df['Reading_Score'] = np.where(refined_df['Reading_Score'] < lwr_bound, median, refined_df['Reading_Score'])
 print(refined_df)
 
-refined_df.boxplot(['reading score'])
+refined_df.boxplot(['Reading_Score'])
 plt.show()
 
-df = pd.read_csv("StudentsPerformanceTest1.csv")
 
-current_year = 2024
-df['Duration'] = current_year - df['Club_Join_Date']
-print(df[['Club_Join_Date', 'Duration']].head(10))
-
-z2 = np.abs(stats.zscore(df['math score']))
+z2 = np.abs(stats.zscore(df['Math_Score']))
 new_df2 = df[z2 >= 0.18].copy()
 
-new_df2['math score'].plot(kind='hist', title='Math Score - Before Log Transform')
+new_df2['Math_Score'].plot(kind='hist', title='Math Score - Before Log Transform')
 plt.xlabel('Math Score')
 plt.show()
 
-df['log_math'] = np.log10(df['math score'])
-print(df[['math score', 'log_math']].head(10))
+df['log_math'] = np.log10(df['Math_Score'])
+print(df[['Math_Score', 'log_math']].head(10))
 
 df['log_math'].plot(kind='hist', title='Math Score - After Log10 Transform')
 plt.xlabel('log10(Math Score)')
