@@ -31,6 +31,9 @@ df = boston.frame
 X = df.drop(['MEDV'], axis=1)
 y = df['MEDV']
 
+X = X.astype(float)
+y = y.astype(float) # Also ensure target is float for consistency
+
 xtrain, xtest, ytrain, ytest = train_test_split(X, y, test_size=0.2, random_state=0)
 
 lm = LinearRegression()
