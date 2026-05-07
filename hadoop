@@ -1,0 +1,13 @@
+jps
+
+hadoop fs -mkdir /inpt_data2 
+
+hadoop fs -put c:\data2.txt /int_data2  
+  
+hadoop fs -ls /int_data2 
+
+hadoop fs -cat /int_data2/data2.txt
+  
+hadoop jar C:\hadoop\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.2.4.jar wordcount /inpt_data2/data2.txt /word12  
+  
+hadoop fs -cat /word12/*  
